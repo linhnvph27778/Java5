@@ -13,6 +13,7 @@
 <body>
 
 <div class="col-10 offset-1 mt-3">
+
     <div class="text-center">
         <label>Giỏ hàng</label>
     </div>
@@ -43,7 +44,7 @@
                     <td>${gh.giaBan}</td>
                     <td>${gh.soLuong * gh.giaBan}</td>
                     <td>
-                        <a class="btn btn-primary" href="/mua-hang?ctspId=${gh.idCtsp}">Mua hàng</a>
+                        <a class="btn btn-primary" href="/mua-hang/mua-mot-sp?ctspId=${gh.idCtsp}">Mua hàng</a>
                     </td>
                 </tr>
             </c:forEach>

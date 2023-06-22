@@ -9,11 +9,13 @@ import com.example.linhnvph27778.model.Item;
 import com.example.linhnvph27778.service.ChiTietSPService;
 import com.example.linhnvph27778.service.HoaDonChiTietService;
 import com.example.linhnvph27778.service.HoaDonService;
+import jakarta.servlet.http.HttpServletRequest;
 import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 
 import java.text.SimpleDateFormat;
@@ -23,6 +25,7 @@ import java.util.Optional;
 import java.util.UUID;
 
 @Controller
+@RequestMapping("/mua-hang")
 public class CartController {
     @Autowired
     private ChiTietSPService chiTietSPService;
@@ -35,6 +38,10 @@ public class CartController {
 
     @Autowired
     private HoaDonChiTietService hoaDonChiTietService;
+
+    @Autowired
+    private HttpSession session;
+
 
 
     private SimpleDateFormat simpleDateFormat = new SimpleDateFormat("yyyy-MM-dd");
@@ -78,8 +85,7 @@ public class CartController {
             for (Item itemTmp : listItem) {
                 if (itemTmp.getIdCtsp().equals(ctspId)) {
                     itemTmp.setSoLuong(itemTmp.getSoLuong() + 1);
-//                    int soLuong = itemTmp.getSoLuong();
-                    return "redirect:/cart/view";
+                    return "redirect:/mua-hang/cart/view";
                 }
             }
             // không có thì thêm sản phẩm vào
@@ -94,7 +100,7 @@ public class CartController {
 //        gioHang.setNgayTao(ngayTao);
 //        gioHang.setTinhTrang(tinhTrang);
 
-        return "redirect:/cart/view";
+        return "redirect:/mua-hang/cart/view";
 
     }
 
@@ -103,18 +109,20 @@ public class CartController {
     public String addToCart(Model model) {
         Cart cart = (Cart) httpSession.getAttribute("cart");
         ArrayList<Item> list = cart.getListItem();
-        if (cart ==null ){
-            model.addAttribute("mesNull", "Bnaj chưa có sản phẩm trong giỏ hàng");
-       //     model.addAttribute("view","/views/banhang/giohang.jsp");
+        if (cart == null ){
+//            model.addAttribute("mesNull", "Bnaj chưa có sản phẩm trong giỏ hàng");
+            session.setAttribute("error","Bạn chưa có sp trong giỏ");
+            model.addAttribute("view","/views/banhang/chitietsanpham.jsp");
             return "banhang/layout";
         }else {
             model.addAttribute("gioHangChiTiet", list);
+            session.setAttribute("message","Thêm vào giỏ hàng thành công");
             model.addAttribute("view","/views/banhang/giohang.jsp");
             return "banhang/layout";
         }
     }
 
-    @GetMapping("/mua-hang")
+    @GetMapping("/mua-mot-sp")
     public String muaHang(@RequestParam("ctspId") UUID idCtsp,Model model){
 
         //tạo hóa đơn
@@ -161,11 +169,13 @@ public class CartController {
         chiTietSPService.saveOrUpdate(chiTietSanPham);
         System.out.println(chiTietSanPham.getSoLuongTon());
 
-        model.addAttribute("view","/views/banhang/giohang.jsp");
-        return "banhang/layout";
+       // model.addAttribute("view","/views/banhang/giohang.jsp");
+        session.setAttribute("message","Mua thành công một sản phẩm");
+        return "redirect:/mua-hang/cart/view";
+      //  return "banhang/layout";
     }
 
-    @GetMapping("/mua-hang/mua-tat-ca")
+    @GetMapping("/mua-tat-ca")
     public String muaHangTatCa(Model model){
         Cart cart = (Cart) httpSession.getAttribute("cart");
         ArrayList<Item> list = cart.getListItem();
@@ -199,7 +209,8 @@ public class CartController {
             // Sau khi đã mua hàng thực hiện xóa giỏ hàng
             httpSession.removeAttribute("cart");
         }
-        return "redirect:/hien-thi";
+        session.setAttribute("message","Mua hàng thành công");
+        return "redirect:/mua-hang/hien-thi";
 
     }
 }

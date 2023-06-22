@@ -1,7 +1,5 @@
 <%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <%@ taglib uri="http://java.sun.com/jsp/jstl/fmt" prefix="f" %>
-<%@ taglib prefix="form" uri="http://www.springframework.org/tags/form" %>
-<%@ taglib prefix="sf" uri="http://www.springframework.org/tags/form" %>
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
 <html >
 <head>
@@ -16,6 +14,10 @@
     <p>${tieuDe}</p>
 </div>
 <div class="col-6 offset-3 mt-5 border bordered-dark ">
+    <c:if test="${ not empty sessionScope.error }">
+        <div class="alert alert-danger text-center">${sessionScope.error}</div>
+        <c:remove var="error" scope="session"/>
+    </c:if>
     <form method="post"  action="${action}">
         <div class="col-6 offset-3 ">
             <div class="mt-3">
@@ -26,9 +28,9 @@
                 <label class="">Mật khẩu</label>
                 <input name="matKhau" class="form-control "/>
             </div>
-            <div class="text-danger">
-                ${mes}
-            </div>
+<%--            <div class="text-danger">--%>
+<%--                ${mes}--%>
+<%--            </div>--%>
         </div>
 
 

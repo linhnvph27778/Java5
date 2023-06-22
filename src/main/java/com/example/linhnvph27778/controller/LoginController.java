@@ -3,16 +3,13 @@ package com.example.linhnvph27778.controller;
 import com.example.linhnvph27778.model.KhachHang;
 import com.example.linhnvph27778.model.NhanVien;
 import com.example.linhnvph27778.service.KhachHangService;
-import com.example.linhnvph27778.service.NhaSanXuatService;
 import com.example.linhnvph27778.service.NhanVienService;
-import com.example.linhnvph27778.viewmodel.NhanVienVM;
-import jakarta.validation.Valid;
+import jakarta.servlet.http.HttpServletRequest;
+import jakarta.servlet.http.HttpSession;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
-import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
@@ -26,6 +23,11 @@ public class LoginController {
     @Autowired
     private KhachHangService khachHangService;
 
+    @Autowired
+    private HttpServletRequest request;
+
+
+
     @GetMapping("/nhan-vien")
     public String loginNhanVien(Model model){
         model.addAttribute("action","/login/dang-nhap-nhan-vien");
@@ -36,17 +38,18 @@ public class LoginController {
     @PostMapping("/dang-nhap-nhan-vien")
     public String dangNhapNhanVien(@RequestParam("ten")String ten,@RequestParam("matKhau") String matKhau, Model model){
         NhanVien nv = nhanVienService.loginNhanVien(ten, matKhau);
+        HttpSession session = request.getSession();
             if (ten.isEmpty() || matKhau.isEmpty()){
                 model.addAttribute("mes","Không được bỏ trống");
-                model.addAttribute("tieuDe","Quản lý nhân viên");
+                session.setAttribute("error","Không được bỏ trống");
                 return "login";
             }else if (nv==null){
-                model.addAttribute("mes","Sai tên hoặc mk");
+                session.setAttribute("error","Sai tên hoặc mk");
                 model.addAttribute("tieuDe","Quản lý nhân viên");
                 return "login";
             }
-            System.out.println(nv);
-            return "layout";
+        session.setAttribute("nhanVien",nv);
+        return "redirect:/san-pham/hien-thi";
     }
 
     @GetMapping("/khach-hang")
@@ -58,17 +61,21 @@ public class LoginController {
 
     @PostMapping("/dang-nhap-khach-hang")
     public String dangNhapKhachHang(@RequestParam("ten")String ten,@RequestParam("matKhau") String matKhau,Model model){
-        KhachHang nv = khachHangService.loginKhachHang(ten, matKhau);
+        KhachHang khachHang = khachHangService.loginKhachHang(ten, matKhau);
+        HttpSession session = request.getSession();
         if (ten.isEmpty() || matKhau.isEmpty()){
-            model.addAttribute("mes","Không được bỏ trống");
             model.addAttribute("tieuDe","Đăng nhập");
+            session.setAttribute("error","Không được bỏ trống");
             return "login";
-        }else if (nv==null){
-            model.addAttribute("mes","Sai tên hoặc mk");
+        }else if (khachHang==null){
             model.addAttribute("tieuDe","Đăng nhập");
+            session.setAttribute("error","Sai tên hoặc mk");
             return "login";
         }
-        model.addAttribute("view","/views/banhang/chitietsanpham.jsp");
-        return "banhang/layout";
+        session.setAttribute("khachHang",khachHang);
+//        model.addAttribute("view","/mua-hang/hien-thi");
+//        model.addAttribute("view","/views/banhang/chitietsanpham.jsp");
+//        return "banhang/layout";
+        return "redirect:/mua-hang/hien-thi";
     }
 }

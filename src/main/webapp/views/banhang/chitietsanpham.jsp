@@ -32,7 +32,7 @@
                         <p class="card-text ">${ctsp.giaBan} $</p>
                     </div>
                     <div class="card-footer ">
-                        <a href="/cart/add?ctspId=${ctsp.id}" class="btn btn-primary">Thêm giỏ hàng</a>
+                        <a href="/mua-hang/cart/add?ctspId=${ctsp.id}" class="btn btn-primary">Thêm giỏ hàng</a>
                     </div>
                 </div>
             </div>

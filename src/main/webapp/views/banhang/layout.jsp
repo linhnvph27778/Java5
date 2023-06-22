@@ -1,4 +1,5 @@
 <%@ page contentType="text/html;charset=UTF-8" language="java" %>
+<%@ taglib prefix="c" uri="http://java.sun.com/jsp/jstl/core" %>
 <html >
 <head>
     <title>Title</title>
@@ -21,10 +22,10 @@
                         <a class="nav-link active" aria-current="page" href="#">Trang chủ</a>
                     </li>
                     <li class="nav-item">
-                        <a class="nav-link" href="/hien-thi">Sản phẩm</a>
+                        <a class="nav-link" href="/mua-hang/hien-thi">Sản phẩm</a>
                     </li>
                     <li class="nav-item">
-                        <a href="/cart/view" class="d-flex btn btn-primary">Xem giỏ hàng</a>
+                        <a href="/mua-hang/cart/view" class="d-flex btn btn-primary">Xem giỏ hàng</a>
                     </li>
 
                 </ul>
@@ -45,9 +46,19 @@
 
         <article class="col-10" style="min-height: 500px;">
             <div class="" >
-                <div class="text-center text-danger">
-                    <span>${mesNull}</span>
+                <div>
+                    <c:if test="${ not empty sessionScope.error }">
+                        <div class="alert alert-danger text-center">${sessionScope.error}</div>
+                        <c:remove var="error" scope="session"/>
+                    </c:if>
                 </div>
+                <div>
+                    <c:if test="${ not empty sessionScope.message }">
+                        <div class="alert alert-success text-center">${sessionScope.message}</div>
+                        <c:remove var="message" scope="session"/>
+                    </c:if>
+                </div>
+
                 <jsp:include page="${ view }"/>
             </div>
         </article>
